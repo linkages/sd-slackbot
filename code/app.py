@@ -12,27 +12,27 @@ import logging
 from multiprocessing import Process
 from celery import Celery
 
+outdir="/out/"
+logdir = os.environ['logdir']
+domain= os.environ['domain']
 #debug = os.environ['debug']
 debug = True
 #app.logger.info(f'Debug: {debug}\nToken: {postTokens}')
 
-outdir="/out/"
-domain= os.environ['domain']
-
 app = Flask(__name__)
 app.config.from_object("config")
 
-# Set up celery client
-client = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-client.conf.update(app.config)
-
 FORMAT = '[%(asctime)s]  %(message)s'
-logging.basicConfig(level=logging.DEBUG, format=FORMAT)
+logging.basicConfig(level=logging.DEBUG, format=FORMAT, filename=logdir + "/slackbot.log")
 app.logger.info("Starting up....")
+
+# Set up celery client
+client = Celery(app.name, backend=app.config['CELERY_RESULT_BACKEND'], broker=app.config['CELERY_BROKER_URL'])
+client.conf.update(app.config)
 
 @client.task
 def fetch_image_task(url, data, filename):
-#    app.logger.debug("Starting up image processing")
+    app.logger.debug("Starting up image processing task")
     r = requests.post(url, stream=True, json=data)
     if r.status_code == 200:
         output = r.json()['output'][0]
@@ -45,7 +45,7 @@ def fetch_image_task(url, data, filename):
         app.logger.info("Something went wrong: [{status}]".format(status=r.status_code))
 
     del r
-#    app.logger.debug("Finished image processing")
+    app.logger.debug("Finished image processing task")
 
 def fetch_image(url, data, filename):
 #    app.logger.debug("Starting up image processing")
@@ -117,15 +117,16 @@ def aidream():
 
     url = 'http://diffusion:5000/predictions'
 
-#    fetch_image_task.apply_async(args=[url, data, filename])
-    app.logger.debug("Calling Image processing function returned")
-    image = fetch_image(url, data, filename)
-    app.logger.debug("Image processing function returned")
+    app.logger.debug("Scheduling the image creation task")
+    fetch_image_task.apply_async(args=[url, data, filename])
+#    app.logger.debug("Calling Image processing function returned")
+#    image = fetch_image(url, data, filename)
+#    app.logger.debug("Image processing function returned")
 
-    if image is not None:
-        out_file = open(filename, 'wb')
-        out_file.write(image)
-        out_file.close()
+    # if image is not None:
+    #     out_file = open(filename, 'wb')
+    #     out_file.write(image)
+    #     out_file.close()
     
 #    app.logger.debug("DEBUG: {rDict}".format(rDict=rDict))
 
