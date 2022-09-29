@@ -134,8 +134,9 @@ def aidream():
     return rDict
 
 @app.route('/events', methods=['POST'])
-def events():
+def event_handler():
     app.logger.debug(f"Events: {request['form']}")
+    return 200
 
 
 @app.route('/', methods=['GET'])
