@@ -33,8 +33,12 @@ services:
     restart: unless-stopped
     depends_on:
       - diffusion
+      - redis
 #    ports:
 #      - "8080:8080"
     volumes:
       - /export/slackbot/outputs:/out
     env_file: sd-slackbot.env
+
+  redis:
+    image: redis:latest
