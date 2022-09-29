@@ -15,7 +15,6 @@ services:
       - /export/caddy/site:/srv
       - /export/caddy/caddy_data:/data
       - /export/caddy/caddy_config:/config
-      - /export/slackbot/outputs:/srv/images
 
   diffusion:
     image: r8.im/stability-ai/stable-diffusion@sha256:a9758cbfbd5f3c2094457d996681af52552901775aa2d6dd0b17fd15df959bef
@@ -37,7 +36,8 @@ services:
 #    ports:
 #      - "8080:8080"
     volumes:
-      - /export/slackbot/outputs:/out
+      - /export/caddy/site/images:/out
+      - /export/slackbot/logs:/logs
     env_file: sd-slackbot.env
 
   redis:
