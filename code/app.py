@@ -134,10 +134,27 @@ def aidream():
     return rDict
 
 @app.route('/events', methods=['POST'])
-def event_handler():
-    app.logger.debug(f"Events: {request['form']}")
-    return 200
-
+def events():
+    rDict = {}
+    if request.is_json:
+        data = request.get_json()
+        if data['type'] is not None:
+            match data['type']:
+                case "url_verification":
+                    rDict = {
+                        'challenge': data['challenge']
+                    }
+                case "event_callback":
+                    event = data['event']
+                    event_type = event['type']
+                    app.logger.debug("Events: Got an event_callback of type: {type}".format(tyep=event_type))
+                case _:
+                    app.logger.debug("Events: Got some unknown event: {data}".format(data=data))
+            
+            return rDict
+    else:
+        app.logger.debug("Events: got something but I don't know what it was: {data}".format(data=request.get_data()))
+        return ""
 
 @app.route('/', methods=['GET'])
 def slash():
