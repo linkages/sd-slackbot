@@ -23,7 +23,7 @@ app = Flask(__name__)
 app.config.from_object("config")
 
 FORMAT = '[%(asctime)s]  %(message)s'
-logging.basicConfig(level=logging.DEBUG, format=FORMAT, filename=logdir + "/slackbot.log")
+logging.basicConfig(level=logging.DEBUG, format=FORMAT, filename=logdir + "slackbot.log")
 app.logger.info("Starting up....")
 
 # Set up celery client
