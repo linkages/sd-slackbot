@@ -6,6 +6,7 @@ import random
 import urllib.parse
 from datetime import datetime
 import base64
+import pprint
 
 from flask import abort, Flask, config, jsonify, request, json, render_template, Response, make_response, g
 import logging
@@ -128,9 +129,14 @@ def aidream():
     #     out_file.write(image)
     #     out_file.close()
     
-#    app.logger.debug("DEBUG: {rDict}".format(rDict=rDict))
+    # app.logger.debug("DEBUG: {rDict}".format(rDict=rDict))
 
     return rDict
+
+@app.route('/events', methods=['POST'])
+def events():
+    app.logger.debug(f"Events: {request['form']}")
+
 
 @app.route('/', methods=['GET'])
 def slash():
