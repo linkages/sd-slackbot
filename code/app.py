@@ -28,7 +28,7 @@ app.logger.info("Starting up....")
 
 # Set up celery client
 client = Celery(app.name, backend=app.config['CELERY_RESULT_BACKEND'], broker=app.config['CELERY_BROKER_URL'])
-client.conf.update(app.config)
+# client.conf.update(app.config)
 
 @client.task
 def fetch_image_task(url, data, filename):
