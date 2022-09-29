@@ -1,0 +1,40 @@
+version: "3.7"
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - slackbot
+    ports:
+      - "80:80"
+      - "443:443"
+#      - "443:443/udp"
+    volumes:
+      - /export/caddy/config/Caddyfile:/etc/caddy/Caddyfile
+      - /export/caddy/site:/srv
+      - /export/caddy/caddy_data:/data
+      - /export/caddy/caddy_config:/config
+      - /export/slackbot/outputs:/srv/images
+
+  diffusion:
+    image: r8.im/stability-ai/stable-diffusion@sha256:a9758cbfbd5f3c2094457d996681af52552901775aa2d6dd0b17fd15df959bef
+    restart: unless-stopped
+#    ports:
+#      - "5000:5000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
+  slackbot:
+    image: sd-slackbot:latest
+    restart: unless-stopped
+    depends_on:
+      - diffusion
+#    ports:
+#      - "8080:8080"
+    volumes:
+      - /export/slackbot/outputs:/out
+    env_file: sd-slackbot.env
