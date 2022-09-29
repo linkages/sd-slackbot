@@ -1,5 +1,6 @@
 sds.wiggels.dev {
         reverse_proxy /aidream slackbot:8080
+        reverse_proxy /events slackbot:8080
         root * /srv
         file_server browse
 }
