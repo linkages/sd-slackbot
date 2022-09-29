@@ -9,7 +9,12 @@ distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
 apt-get update
 apt-get install -y docker-compose nvidia-docker2 virtualenvwrapper emacs-nox
 
+mkdir /etc/docker-compose
 mkdir /export
-mkdir -p /export/slackbot/outputs
+mkdir -p /export/slackbot/logs
+
+for dir in caddy_config site caddy_data config site/images; do
+    mkdir -p /export/caddy/${dir}
+done;
 
 #docker run --rm --gpus all nvidia/cuda:11.0.3-base-ubuntu20.04 nvidia-smi
