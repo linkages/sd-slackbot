@@ -1,0 +1,3 @@
+#!/bin/sh
+
+celery -A app --workdir app worker --loglevel=DEBUG  --concurrency=1
