@@ -76,18 +76,16 @@ def fetch_and_reply(query, channel):
                 "type": "image",
                 "image_url": str(imageurl),
                 "alt_text": str(query)
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": str(markdown)
+                }
             }
         ]
     }
-    #         {
-    #             "type": "section",
-    #             "text": {
-    #                 "type": "mrkdwn",
-    #                 "text": str(markdown)
-    #             }
-    #         }
-    #     ]
-    # }
 
     headers = {
         'Content-type': 'application/json',
