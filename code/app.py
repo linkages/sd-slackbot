@@ -218,7 +218,7 @@ def events():
                     channel = event['channel']
                     query = original_text.replace("<@U044UD23SP2>", "").strip()
                     app.logger.debug("Events: Got an event_callback of type: {type}".format(type=event_type))
-                    app.logger.debug("Events: User said the following: [{text}]".format(text=text))
+                    app.logger.debug("Events: User said the following: [{query}]".format(query=query))
                     fetch_and_reply.apply_async(args=[query, channel])
                 case _:
                     app.logger.debug("Events: Got some unknown event: {data}".format(data=data))
