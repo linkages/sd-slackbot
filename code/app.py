@@ -76,16 +76,17 @@ def fetch_and_reply(query, channel):
                 "type": "image",
                 "image_url": str(imageurl),
                 "alt_text": str(query)
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": str(markdown)
-                }
             }
-        ]
     }
+    #         {
+    #             "type": "section",
+    #             "text": {
+    #                 "type": "mrkdwn",
+    #                 "text": str(markdown)
+    #             }
+    #         }
+    #     ]
+    # }
 
     headers = {
         'Content-type': 'application/json',
@@ -93,10 +94,11 @@ def fetch_and_reply(query, channel):
     }
 
     app.logger.debug("Posting to channel: [{channel}]".format(channel=channel))
+    app.logger.debug("Going to post this: {data}".format(data=rDict))
     chatUrl = 'https://slack.com/api/chat.postMessage'
     r = requests.post(chatUrl, headers=headers, json=rDict)
     if r.status_code == 200:
-        app.logger.debug("Post message: {message}".format(message=r.json()))
+        app.logger.debug("Response: {message}".format(message=r.json()))
     else:
         app.logger.info("Something went wrong: [{status}]".format(status=r.status_code))
 
