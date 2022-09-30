@@ -38,7 +38,7 @@ def fetch_and_reply(query, channel):
 
     data = {
         "input": {
-            "prompt": str(text),
+            "prompt": str(query),
             "width": "512",
             "height": "512",
             "num_outputs": "1"
