@@ -19,6 +19,7 @@ domain= os.environ['domain']
 #debug = os.environ['debug']
 debug = True
 #app.logger.info(f'Debug: {debug}\nToken: {postTokens}')
+auth_token = os.environ['auth_token']
 
 app = Flask(__name__)
 app.config.from_object("config")
@@ -88,7 +89,7 @@ def fetch_and_reply(query, channel):
 
     headers = {
         'Content-type': 'application/json',
-        'Authorization': 'Bearer xoxb-1862183314966-4164444128784-fQdsmuSB0rl9cLyx6TnsMxL5'
+        'Authorization': 'Bearer '+ auth_token
     }
 
     app.logger.debug("Posting to channel: [{channel}]".format(channel=channel))
