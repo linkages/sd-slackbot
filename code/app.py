@@ -91,6 +91,7 @@ def fetch_and_reply(query, channel):
         'Authorization': 'Bearer xoxb-1862183314966-4164444128784-fQdsmuSB0rl9cLyx6TnsMxL5'
     }
 
+    app.logger.debug("Posting to channel: [{channel}]".format(channel=channel))
     chatUrl = 'https://slack.com/api/chat.postMessage'
     r = requests.post(chatUrl, headers=headers, json=rDict)
     if r.status_code == 200:
