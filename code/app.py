@@ -147,7 +147,11 @@ def events():
                 case "event_callback":
                     event = data['event']
                     event_type = event['type']
+                    original_text = event['text']
+                    channel = event['channel']
+                    text = original_text.replace("<@U044UD23SP2>", "").trim()
                     app.logger.debug("Events: Got an event_callback of type: {type}".format(type=event_type))
+                    app.logger.debug("Events: User said the following: [{text}]".format(text=text))
                 case _:
                     app.logger.debug("Events: Got some unknown event: {data}".format(data=data))
             
