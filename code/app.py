@@ -94,9 +94,9 @@ def fetch_and_reply(query, channel):
     chatUrl = 'https://slack.com/api/chat.postMessage'
     r = requests.post(chatUrl, headers=headers, json=rDict)
     if r.status_code == 200:
-        app.log.debug("Post message: {message}".format(r.json()))
+        app.logger.debug("Post message: {message}".format(r.json()))
     else:
-        app.log.info("Something went wrong: [{status}]".format(status=r.status_code))
+        app.logger.info("Something went wrong: [{status}]".format(status=r.status_code))
 
     del r
 
