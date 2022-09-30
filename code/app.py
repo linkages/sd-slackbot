@@ -32,6 +32,73 @@ client = Celery(app.name, backend=app.config['CELERY_RESULT_BACKEND'], broker=ap
 # client.conf.update(app.config)
 
 @client.task
+def fetch_and_reply(query, channel):
+    app.logger.debug("Starting up image processing task")
+    url = 'http://diffusion:5000/predictions'
+
+    data = {
+        "input": {
+            "prompt": str(text),
+            "width": "512",
+            "height": "512",
+            "num_outputs": "1"
+        }
+    }
+
+    image_date = datetime.now().strftime("%Y-%m-%dT%H%M%S.%f")
+    image_name = data["input"]["prompt"].replace(" ","_")
+    uri = image_date + "+" + image_name + ".png"
+    filename = outdir + image_date + "+" + image_name + ".png"
+
+    imageurl = "https://{domain}/images/{uri}".format(domain=domain, uri=uri)
+    markdown = "<{imageurl}|{query}>".format(imageurl=imageurl, query=query)
+
+    r = requests.post(url, stream=True, json=data)
+    if r.status_code == 200:
+        output = r.json()['output'][0]
+        base64string = output.replace("data:image/png;base64,","")
+        image = base64.b64decode(base64string)
+        out_file = open(filename, 'wb')
+        out_file.write(image)
+        out_file.close()
+    else:
+        app.logger.info("Something went wrong creating the image: [{status}]".format(status=r.status_code))
+
+    del r
+    app.logger.debug("Finished image processing task")
+    app.logger.debug("Creating message to post to user")
+
+    rDict = {
+        "channel": str(channel),
+        "blocks": [
+            {
+                "type": "image",
+                "image_url": str(imageurl),
+                "alt_text": str(query)
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": str(markdown)
+                }
+            }
+        ]
+    }
+
+    headers = {
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer xoxb-1862183314966-4164444128784-fQdsmuSB0rl9cLyx6TnsMxL5'
+    }
+
+    chatUrl = 'https://slack.com/api/chat.postMessage'
+    r = requests.post(chatUrl, headers=headers, json=rDict)
+    if r.status_code != 200:
+        app.log.info("Something went wrong: [{status}]".format(status=r.status_code))
+
+    del r
+
+@client.task
 def fetch_image_task(url, data, filename):
     app.logger.debug("Starting up image processing task")
     r = requests.post(url, stream=True, json=data)
@@ -149,15 +216,16 @@ def events():
                     event_type = event['type']
                     original_text = event['text']
                     channel = event['channel']
-                    text = original_text.replace("<@U044UD23SP2>", "").strip()
+                    query = original_text.replace("<@U044UD23SP2>", "").strip()
                     app.logger.debug("Events: Got an event_callback of type: {type}".format(type=event_type))
                     app.logger.debug("Events: User said the following: [{text}]".format(text=text))
+                    fetch_and_reply.apply_async(args=[query, channel])
                 case _:
                     app.logger.debug("Events: Got some unknown event: {data}".format(data=data))
             
             return rDict
     else:
-        app.logger.debug("Events: got something but I don't know what it was: {data}".format(data=request.get_data()))
+        app.logger.debug("Events: Got a non-json request: {data}".format(data=request.get_data()))
         return ""
 
 @app.route('/', methods=['GET'])
