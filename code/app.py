@@ -147,7 +147,7 @@ def events():
                 case "event_callback":
                     event = data['event']
                     event_type = event['type']
-                    app.logger.debug("Events: Got an event_callback of type: {type}".format(tyep=event_type))
+                    app.logger.debug("Events: Got an event_callback of type: {type}".format(type=event_type))
                 case _:
                     app.logger.debug("Events: Got some unknown event: {data}".format(data=data))
             
