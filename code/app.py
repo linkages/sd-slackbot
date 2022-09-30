@@ -77,6 +77,7 @@ def fetch_and_reply(query, channel):
                 "image_url": str(imageurl),
                 "alt_text": str(query)
             }
+        ]
     }
     #         {
     #             "type": "section",
