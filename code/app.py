@@ -30,6 +30,7 @@ checkpoint = os.environ['checkpoint']
 username = os.environ['username']
 password = os.environ['password']
 sdDomain = os.environ['sdDomain']
+negativePrompt = os.environ['negativePrompt']
 
 app = Flask(__name__)
 app.config.from_object("config")
@@ -73,7 +74,7 @@ def fetch_and_reply(query, channel):
         "height": height,
         "restore_faces": "false",
         "tiling": "false",
-        "negative_prompt": "((((ugly)))), (((duplicate))), ((morbid)), ((mutilated)), extra fingers, mutated hands, ((poorly drawn hands)), ((poorly drawn face)), (((mutation))), (((deformed))), blurry, ((bad anatomy)), (((bad proportions))), ((extra limbs)), cloned face, (((disfigured))), gross proportions, (malformed limbs), ((missing arms)), ((missing legs)), (((extra arms))), (((extra legs))), mutated arms, (((long neck))), melting faces, long neck, flat color, flat shading, (bad legs), one leg, extra leg, (bad face), (bad eyes), ((bad hands, bad feet, missing fingers, cropped:1.0)), worst quality, jpeg artifacts, signature, (((watermark))), (username), blurry, ugly, old, wide face, ((fused fingers)), ((too many fingers)), amateur drawing, odd, fat, out of frame, (cloned face:1.3), (mutilated:1.3), (deformed:1.3), (gross proportions:1.3), (disfigured:1.3), (mutated hands:1.3), (bad hands:1.3), (extra fingers:1.3), long neck, extra limbs, broken limb, asymmetrical eyes, necklace, drawn, ((mutilated)), [out of frame], mutated hands, Photoshop, tiling, poorly drawn hands, poorly drawn feet, poorly drawn face, out of frame, mutation, mutated, extra limbs, extra legs, extra arms, disfigured, deformed, cross-eye, body out of frame, blurry, bad art, bad anatomy, 3d render",
+        "negative_prompt": str(negativePrompt),
         "eta": 0,
         "s_churn": 0,
         "s_tmax": 0,
