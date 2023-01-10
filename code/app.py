@@ -22,6 +22,7 @@ debug = True
 auth_token = os.environ['auth_token']
 
 steps = os.environ['steps']
+scale = os.environ['scale']
 sampler = os.environ['sampler']
 width = os.environ['width']
 height = os.environ['height']
@@ -67,7 +68,7 @@ def fetch_and_reply(query, channel):
         "batch_size": 1,
         "n_iter": 1,
         "steps": steps,
-        "cfg_scale": 8,
+        "cfg_scale": scale,
         "width": width,
         "height": height,
         "restore_faces": "false",
