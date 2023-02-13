@@ -91,7 +91,7 @@ def fetch_and_reply(query, channel):
 
     image_date = datetime.now().strftime("%Y-%m-%dT%H%M%S.%f")
     image_name = data["prompt"].replace(" ","_")
-    uri = image_date + "+" + image_name + ".png"
+    uri = image_date + ".png"
     filename = outdir + image_date + ".png"
 
     imageurl = "https://{domain}/images/{uri}".format(domain=domain, uri=uri)
