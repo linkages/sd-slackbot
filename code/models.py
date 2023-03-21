@@ -5,7 +5,7 @@ import requests
 import base64
 from datetime import datetime
 
-url = 'https://user:aiIsReallyCool!@ai.benshoshan.com/sdapi/v1/sd-models'
+url = 'https://user:xxxxxxxxxxxx@ai.benshoshan.com/sdapi/v1/sd-models'
 
 r = requests.get(url)
 if r.status_code == 200:
