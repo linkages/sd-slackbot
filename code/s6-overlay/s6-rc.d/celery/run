@@ -1,3 +1,3 @@
 #!/bin/sh
 
-celery -A app.client --workdir /app worker --loglevel=DEBUG  --concurrency=1
+celery -A worker.client --workdir /app worker --loglevel=DEBUG  --concurrency=1
