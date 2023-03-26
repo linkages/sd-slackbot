@@ -7,7 +7,7 @@ from celery import Celery
 from celery.utils.log import get_task_logger
 
 # Set up celery client
-client = Celery(__name__, backend="redis://redis:6379", broker="redis://redis:6379")
+client = Celery(__name__, backend="redis://redis:6379/2", broker="redis://redis:6379/2")
 # client.conf.update(app.config)
 
 outdir="/out/"
