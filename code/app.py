@@ -152,39 +152,7 @@ def fetch_and_reply(query, channel):
         app.logger.info("Something went wrong: [{status}]".format(status=r.status_code))
 
     del r
-
-@client.task
-def fetch_image_task(url, data, filename):
-    app.logger.debug("Starting up image processing task")
-    r = requests.post(url, stream=True, json=data)
-    if r.status_code == 200:
-        output = r.json()['output'][0]
-        base64string = output.replace("data:image/png;base64,","")
-        image = base64.b64decode(base64string)
-        out_file = open(filename, 'wb')
-        out_file.write(image)
-        out_file.close()
-    else:
-        app.logger.info("Something went wrong: [{status}]".format(status=r.status_code))
-
-    del r
-    app.logger.debug("Finished image processing task")
-
-def fetch_image(url, data, filename):
-#    app.logger.debug("Starting up image processing")
-    r = requests.post(url, stream=True, json=data)
-    if r.status_code == 200:
-        output = r.json()['output'][0]
-        base64string = output.replace("data:image/png;base64,","")
-        image = base64.b64decode(base64string)
-    else:
-        app.logger.info("Something went wrong: [{status}]".format(status=r.status_code))
-        image = None
-
-    del r
-#    app.logger.debug("Finished image processing")
-    return image
-    
+ 
 def is_request_valid(request):
     is_token_valid = request.form['token'] in token.split(',')
     is_team_id_valid = request.form['team_id'] in team.split(',')
@@ -192,68 +160,6 @@ def is_request_valid(request):
 #    app.logger.debug(request.form)
     
     return is_token_valid and is_team_id_valid
-
-@app.post('/aidream')
-async def aidream():
-    if not is_request_valid(request):
-        abort(400)
-
-    if request.form['text'] is not None:
-        query=request.form['text']
-    else:
-        query="I dream of androids"
-
-    data = {
-        "input": {
-            "prompt": str(query),
-            "width": "512",
-            "height": "512",
-            "num_outputs": "1"
-        }
-    }
-
-    image_date = datetime.now().strftime("%Y-%m-%dT%H%M%S.%f")
-    image_name = data["input"]["prompt"].replace(" ","_")
-    uri = image_date + "+" + image_name + ".png"
-    filename = outdir + image_date + "+" + image_name + ".png"
-    
-    imageurl = "https://{domain}/images/{uri}".format(domain=domain, uri=uri)
-    markdown = "<{imageurl}|{query}>".format(imageurl=imageurl, query=query)
-    
-    rDict = {
-        "blocks": [
-            {
-                "type": "image",
-                "image_url": str(imageurl),
-                "alt_text": str(query)
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": str(markdown)
-                }
-            }
-        ],
-        "response_type": "in_channel"
-    }
-
-    url = 'http://diffusion:5000/predictions'
-
-    app.logger.debug("Scheduling the image creation task")
-    fetch_image_task.apply_async(args=[url, data, filename])
-#    app.logger.debug("Calling Image processing function returned")
-#    image = fetch_image(url, data, filename)
-#    app.logger.debug("Image processing function returned")
-
-    # if image is not None:
-    #     out_file = open(filename, 'wb')
-    #     out_file.write(image)
-    #     out_file.close()
-    
-    # app.logger.debug("DEBUG: {rDict}".format(rDict=rDict))
-
-    return rDict
 
 @app.post('/events/r34')
 async def events(payload = Body(...)):
