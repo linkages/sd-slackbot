@@ -21,7 +21,6 @@ outdir="/out/"
 domain= os.environ.get("domain","ai.wiggels.dev")
 #debug = os.environ['debug']
 debug = True
-#app.logger.info(f'Debug: {debug}\nToken: {postTokens}')
 auth_token = os.environ.get("auth_token","")
 
 steps = os.environ.get("steps","25")
@@ -42,9 +41,8 @@ team = os.environ.get("team","")
 
 app = FastAPI()
 
-# FORMAT = '[%(asctime)s]  %(message)s'
-# logging.basicConfig(level=logging.DEBUG, format=FORMAT, filename=logdir + "slackbot.log")
-# app.logger.info("Starting up....")
+logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
+logger = logging.getLogger(__name__)
 
 # Set up celery client
 client = Celery(__name__, backend="redis://redis:6379", broker="redis://redis:6379")
@@ -52,7 +50,7 @@ client = Celery(__name__, backend="redis://redis:6379", broker="redis://redis:63
 
 @client.task
 def fetch_and_reply(query, channel):
-    app.logger.debug("Starting up image processing task")
+    logger.debug("Starting up image processing task")
     url = f'https://{username}:{password}@{sdDomain}/sdapi/v1/txt2img'
 
     data = {
@@ -113,11 +111,11 @@ def fetch_and_reply(query, channel):
         out_file.write(image)
         out_file.close()
     else:
-        app.logger.info("Something went wrong creating the image: [{status}]".format(status=r.status_code))
+        logger.info("Something went wrong creating the image: [{status}]".format(status=r.status_code))
 
     del r
-    app.logger.debug("Finished image processing task")
-    app.logger.debug("Creating message to post to user")
+    logger.debug("Finished image processing task")
+    logger.debug("Creating message to post to user")
 
     rDict = {
         "channel": str(channel),
@@ -142,14 +140,14 @@ def fetch_and_reply(query, channel):
         'Authorization': 'Bearer '+ auth_token
     }
 
-    app.logger.debug("Posting to channel: [{channel}]".format(channel=channel))
-    app.logger.debug("Going to post this: {data}".format(data=rDict))
+    logger.debug("Posting to channel: [{channel}]".format(channel=channel))
+    logger.debug("Going to post this: {data}".format(data=rDict))
     chatUrl = 'https://slack.com/api/chat.postMessage'
     r = requests.post(chatUrl, headers=headers, json=rDict)
     if r.status_code == 200:
-        app.logger.debug("Response: {message}".format(message=r.json()))
+        logger.debug("Response: {message}".format(message=r.json()))
     else:
-        app.logger.info("Something went wrong: [{status}]".format(status=r.status_code))
+        logger.info("Something went wrong: [{status}]".format(status=r.status_code))
 
     del r
  
@@ -157,7 +155,7 @@ def is_request_valid(request):
     is_token_valid = request.form['token'] in token.split(',')
     is_team_id_valid = request.form['team_id'] in team.split(',')
 
-#    app.logger.debug(request.form)
+#    logger.debug(request.form)
     
     return is_token_valid and is_team_id_valid
 
@@ -180,7 +178,7 @@ async def events(payload = Body(...)):
                 logger.debug("Events: User said the following: [{query}]".format(query=query))
                 fetch_and_reply.apply_async(args=[query, channel])
             case _:
-                app.logger.debug("Events: Got some unknown event: {data}".format(data=data))
+                logger.debug("Events: Got some unknown event: {data}".format(data=data))
 
     return JSONResponse(rDict)
 
