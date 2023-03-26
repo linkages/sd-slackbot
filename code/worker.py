@@ -1,6 +1,6 @@
 import os
 import requests
-import datetime
+from datetime import datetime
 import base64
 
 from celery import Celery
