@@ -1,4 +1,4 @@
-FROM python:3.10.6-slim
+FROM python:3.10.10-slim
 COPY requirements.txt /
 RUN apt-get update && \
     apt-get install -y xz-utils procps
@@ -20,5 +20,5 @@ RUN tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz
 
 COPY s6-overlay /etc/s6-overlay
 
-EXPOSE 8080
+EXPOSE 8080 8000
 ENTRYPOINT ["/init"]
