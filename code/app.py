@@ -8,39 +8,45 @@ from datetime import datetime
 import base64
 import pprint
 
-from flask import abort, Flask, config, jsonify, request, json, render_template, Response, make_response, g
+from fastapi import FastAPI
+
+#from flask import abort, Flask, config, jsonify, request, json, render_template, Response, make_response, g
 import logging
 from multiprocessing import Process
 from celery import Celery
 
 outdir="/out/"
-logdir = os.environ['logdir']
-domain= os.environ['domain']
+# logdir = os.environ['logdir']
+domain= os.environ.get("domain","ai.wiggels.dev")
 #debug = os.environ['debug']
 debug = True
 #app.logger.info(f'Debug: {debug}\nToken: {postTokens}')
-auth_token = os.environ['auth_token']
+auth_token = os.environ.get("auth_token","")
 
-steps = os.environ['steps']
-scale = os.environ['scale']
-sampler = os.environ['sampler']
-width = os.environ['width']
-height = os.environ['height']
-checkpoint = os.environ['checkpoint']
-username = os.environ['username']
-password = os.environ['password']
-sdDomain = os.environ['sdDomain']
-negativePrompt = os.environ['negativePrompt']
+steps = os.environ.get("steps","25")
+scale = os.environ.get("scale","8")
+sampler = os.environ.get("sampler","")
+width = os.environ.get("width","768")
+height = os.environ.get("height","768")
+checkpoint = os.environ.get("checkpoint","")
+username = os.environ.get("username","")
+password = os.environ.get("password","")
+sdDomain = os.environ.get("sdDomain","")
+negativePrompt = os.environ.get("negativePrompt","")
+token = os.environ.get("token","")
+team = os.environ.get("team","")
 
-app = Flask(__name__)
-app.config.from_object("config")
+# app = Flask(__name__)
+# app.config.from_object("config")
 
-FORMAT = '[%(asctime)s]  %(message)s'
-logging.basicConfig(level=logging.DEBUG, format=FORMAT, filename=logdir + "slackbot.log")
-app.logger.info("Starting up....")
+app = FastAPI()
+
+# FORMAT = '[%(asctime)s]  %(message)s'
+# logging.basicConfig(level=logging.DEBUG, format=FORMAT, filename=logdir + "slackbot.log")
+# app.logger.info("Starting up....")
 
 # Set up celery client
-client = Celery(app.name, backend=app.config['CELERY_RESULT_BACKEND'], broker=app.config['CELERY_BROKER_URL'])
+client = Celery(__name__, backend="redis://redis:6379", broker="redis://redis:6379")
 # client.conf.update(app.config)
 
 @client.task
@@ -179,15 +185,15 @@ def fetch_image(url, data, filename):
     return image
     
 def is_request_valid(request):
-    is_token_valid = request.form['token'] in os.environ['token'].split(',')
-    is_team_id_valid = request.form['team_id'] in os.environ['team'].split(',')
+    is_token_valid = request.form['token'] in token.split(',')
+    is_team_id_valid = request.form['team_id'] in team.split(',')
 
 #    app.logger.debug(request.form)
     
     return is_token_valid and is_team_id_valid
 
-@app.route('/aidream', methods=['POST'])
-def aidream():
+@app.post('/aidream')
+async def aidream():
     if not is_request_valid(request):
         abort(400)
 
@@ -248,8 +254,8 @@ def aidream():
 
     return rDict
 
-@app.route('/events', methods=['POST'])
-def events():
+@app.post('/events')
+async def events():
     rDict = {}
     if request.is_json:
         data = request.get_json()
@@ -276,8 +282,8 @@ def events():
         app.logger.debug("Events: Got a non-json request: {data}".format(data=request.get_data()))
         return ""
 
-@app.route('/', methods=['GET'])
-def slash():
+@app.get('/')
+async def slash():
     return "<html><a href=\"https://github.com/linkages/dadjokes\">Dad jokes repo</a></html>"
 
 if __name__ == '__main__':
