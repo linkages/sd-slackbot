@@ -23,9 +23,10 @@ def is_request_valid(request):
     
     return is_token_valid and is_team_id_valid
 
-@app.post('/events/r34')
-async def events(payload = Body(...)):
+@app.post('/events/{bot}')
+async def events(bot: str, payload = Body(...)):
     logger.debug(f'Got called: {payload}')
+    logger.info(f'[{bot}] was called')
     rDict = {}
     if payload['type'] is not None:
         match payload['type']:
