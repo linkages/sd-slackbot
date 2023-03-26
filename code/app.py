@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 token = os.environ.get("token","")
 team = os.environ.get("team","")
+botname = os.environment.get("botname", "<@U04VCKFJK17> ")
 
 def is_request_valid(request):
     is_token_valid = request.form['token'] in token.split(',')
@@ -37,7 +38,7 @@ async def events(payload = Body(...)):
                 event_type = event['type']
                 original_text = event['text']
                 channel = event['channel']
-                query = original_text.replace("<@U044UD23SP2>", "").strip()
+                query = original_text.replace(botname, "").strip()
                 logger.debug("Events: Got an event_callback of type: {type}".format(type=event_type))
                 logger.debug("Events: User said the following: [{query}]".format(query=query))
                 fetch_and_reply.apply_async(args=[query, channel])
