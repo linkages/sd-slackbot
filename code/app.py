@@ -30,6 +30,7 @@ async def events(payload = Body(...)):
     if payload['type'] is not None:
         match payload['type']:
             case "url_verification":
+                logger.info("Doing a challenge verification")
                 rDict = {
                     'challenge': payload['challenge']
                 }
@@ -40,10 +41,10 @@ async def events(payload = Body(...)):
                 channel = event['channel']
                 query = original_text.replace(botname, "").strip()
                 logger.debug("Events: Got an event_callback of type: {type}".format(type=event_type))
-                logger.debug("Events: User said the following: [{query}]".format(query=query))
+                logger.info("Events: User said the following: [{query}]".format(query=query))
                 fetch_and_reply.apply_async(args=[query, channel])
             case _:
-                logger.debug("Events: Got some unknown event: {data}".format(data=data))
+                logger.info("Events: Got some unknown event: {data}".format(data=data))
 
     return JSONResponse(rDict)
 
