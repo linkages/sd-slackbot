@@ -254,7 +254,7 @@ async def aidream():
 
     return rDict
 
-@app.post('/events')
+@app.post('/events/r34')
 async def events():
     rDict = {}
     if request.is_json:
