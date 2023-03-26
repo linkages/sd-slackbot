@@ -258,30 +258,25 @@ async def aidream():
 @app.post('/events/r34')
 async def events(payload = Body(...)):
     rDict = {}
-    if request.is_json:
-        data = request.get_json()
-        if data['type'] is not None:
-            match data['type']:
-                case "url_verification":
-                    rDict = {
-                        'challenge': data['challenge']
-                    }
-                case "event_callback":
-                    event = data['event']
-                    event_type = event['type']
-                    original_text = event['text']
-                    channel = event['channel']
-                    query = original_text.replace("<@U044UD23SP2>", "").strip()
-                    app.logger.debug("Events: Got an event_callback of type: {type}".format(type=event_type))
-                    app.logger.debug("Events: User said the following: [{query}]".format(query=query))
-                    fetch_and_reply.apply_async(args=[query, channel])
-                case _:
-                    app.logger.debug("Events: Got some unknown event: {data}".format(data=data))
-            
-            return rDict
-    else:
-        app.logger.debug("Events: Got a non-json request: {data}".format(data=request.get_data()))
-        return ""
+    if payload['type'] is not None:
+        match payload['type']:
+            case "url_verification":
+                rDict = {
+                    'challenge': payload['challenge']
+                }
+            case "event_callback":
+                event = payload['event']
+                event_type = event['type']
+                original_text = event['text']
+                channel = event['channel']
+                query = original_text.replace("<@U044UD23SP2>", "").strip()
+                logger.debug("Events: Got an event_callback of type: {type}".format(type=event_type))
+                logger.debug("Events: User said the following: [{query}]".format(query=query))
+                fetch_and_reply.apply_async(args=[query, channel])
+            case _:
+                app.logger.debug("Events: Got some unknown event: {data}".format(data=data))
+
+    return JSONResponse(rDict)
 
 def generate_html_response():
     html_content = """
