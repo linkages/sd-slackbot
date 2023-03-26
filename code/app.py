@@ -24,6 +24,7 @@ def is_request_valid(request):
 
 @app.post('/events/r34')
 async def events(payload = Body(...)):
+    logger.debug(f'Got called: {payload}')
     rDict = {}
     if payload['type'] is not None:
         match payload['type']:
