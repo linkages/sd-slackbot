@@ -7,6 +7,7 @@ import urllib.parse
 from datetime import datetime
 import base64
 import pprint
+import logging
 
 from fastapi import Body, FastAPI, Form, Request
 from fastapi.responses import JSONResponse, HTMLResponse
