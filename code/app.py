@@ -62,8 +62,8 @@ def generate_html_response():
     """
     return HTMLResponse(content=html_content, status_code=200)
 
-@app.get('/events/r34', response_class=HTMLResponse)
-async def slash():
+@app.get('/events/{bot}', response_class=HTMLResponse)
+async def slash(bot: str):
     return generate_html_response()
 
 if __name__ == '__main__':
