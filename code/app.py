@@ -26,7 +26,7 @@ def is_request_valid(request):
 @app.post('/events/{bot}')
 async def events(bot: str, payload = Body(...)):
     logger.debug(f'Got called: {payload}')
-    logger.info(f'[{bot}] was called')
+    logger.info(f'[{bot}] bot was called')
     rDict = {}
     if payload['type'] is not None:
         match payload['type']:
@@ -41,11 +41,11 @@ async def events(bot: str, payload = Body(...)):
                 original_text = event['text']
                 channel = event['channel']
                 query = original_text.replace(botname, "").strip()
-                logger.debug("Events: Got an event_callback of type: {type}".format(type=event_type))
-                logger.info("Events: User said the following: [{query}]".format(query=query))
+                logger.debug(f'Got an event_callback of type: {event_type}')
+                logger.info(f'User query is: [{query}]')
                 fetch_and_reply.apply_async(args=[query, channel])
             case _:
-                logger.info("Events: Got some unknown event: {data}".format(data=data))
+                logger.info(f"Got some unknown event type: { payload['type'] }")
 
     return JSONResponse(rDict)
 
