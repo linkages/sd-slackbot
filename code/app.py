@@ -8,7 +8,8 @@ from datetime import datetime
 import base64
 import pprint
 
-from fastapi import FastAPI
+from fastapi import Body, FastAPI, Form, Request
+from fastapi.responses import JSONResponse, HTMLResponse
 
 #from flask import abort, Flask, config, jsonify, request, json, render_template, Response, make_response, g
 import logging
@@ -255,7 +256,7 @@ async def aidream():
     return rDict
 
 @app.post('/events/r34')
-async def events():
+async def events(payload = Body(...)):
     rDict = {}
     if request.is_json:
         data = request.get_json()
@@ -282,9 +283,22 @@ async def events():
         app.logger.debug("Events: Got a non-json request: {data}".format(data=request.get_data()))
         return ""
 
-@app.get('/')
+def generate_html_response():
+    html_content = """
+    <html>
+        <head>
+            <title>Slackbot</title>
+        </head>
+        <body>
+            <p><a href=\"https://github.com/linkages/sd-slackbot\">SD Slackbot</a>
+        </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content, status_code=200)
+
+@app.get('/events/r34', response_class=HTMLResponse)
 async def slash():
-    return "<html><a href=\"https://github.com/linkages/dadjokes\">Dad jokes repo</a></html>"
+    return generate_html_response()
 
 if __name__ == '__main__':
     app.run(debug=True)
