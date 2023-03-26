@@ -11,21 +11,22 @@ client = Celery(__name__, backend="redis://redis:6379/2", broker="redis://redis:
 # client.conf.update(app.config)
 
 outdir="/out/"
-domain= os.environ.get("domain","ai.wiggels.dev")
-auth_token = os.environ.get("auth_token","")
+domain= os.environ.get("domain")
+auth_token = os.environ.get("auth_token")
 
 steps = os.environ.get("steps","25")
 scale = os.environ.get("scale","8")
-sampler = os.environ.get("sampler","")
+sampler = os.environ.get("sampler")
 width = os.environ.get("width","768")
 height = os.environ.get("height","768")
-checkpoint = os.environ.get("checkpoint","")
-username = os.environ.get("username","")
-password = os.environ.get("password","")
-sdDomain = os.environ.get("sdDomain","")
-negativePrompt = os.environ.get("negativePrompt","")
-token = os.environ.get("token","")
-team = os.environ.get("team","")
+checkpoint = os.environ.get("checkpoint")
+username = os.environ.get("username")
+password = os.environ.get("password")
+sdDomain = os.environ.get("sdDomain")
+negativePrompt = os.environ.get("negativePrompt")
+
+token = os.environ.get("token")
+team = os.environ.get("team")
 
 logger = get_task_logger(__name__)
 
