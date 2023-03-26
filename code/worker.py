@@ -121,7 +121,7 @@ def fetch_and_reply(query, channel):
         'Authorization': 'Bearer '+ auth_token
     }
 
-    logger.debug("Posting to channel: [{channel}]".format(channel=channel))
+    logger.info("Posting to channel: [{channel}]".format(channel=channel))
     logger.debug("Going to post this: {data}".format(data=rDict))
     chatUrl = 'https://slack.com/api/chat.postMessage'
     r = requests.post(chatUrl, headers=headers, json=rDict)
