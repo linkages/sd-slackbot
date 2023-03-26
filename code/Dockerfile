@@ -6,7 +6,7 @@ RUN pip3 install --upgrade pip && \
     pip3 install -r /requirements.txt
 RUN mkdir /app
 COPY app.py /app
-COPY config.py /app
+COPY logging.conf /app
 
 # set version for s6 overlay
 ARG S6_OVERLAY_VERSION="3.1.2.1"
