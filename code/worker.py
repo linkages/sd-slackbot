@@ -17,17 +17,6 @@ workerConfig = "/config/worker.json"
 domain= os.environ.get("domain")
 auth_token = os.environ.get("auth_token")
 
-steps = os.environ.get("steps","25")
-scale = os.environ.get("scale","8")
-sampler = os.environ.get("sampler")
-width = os.environ.get("width","768")
-height = os.environ.get("height","768")
-checkpoint = os.environ.get("checkpoint")
-username = os.environ.get("username")
-password = os.environ.get("password")
-sdDomain = os.environ.get("sdDomain")
-negativePrompt = os.environ.get("negativePrompt")
-
 token = os.environ.get("token")
 team = os.environ.get("team")
 
@@ -41,6 +30,18 @@ with open(workerConfig) as file:
 def fetch_and_reply(query, channel, bot):
     logger.debug(f"Starting up image processing task for [{bot}]")
     logger.debug(f"Config file is:\n{config}\n")
+
+    steps = config[bot]["steps"]
+    scale = config[bot]["scale"]
+    sampler = config[bot]["sampler"]
+    width = config[bot]["width"]
+    height = config[bot]["height"]
+    checkpoint = config[bot]["checkpoint"]
+    username = config[bot]["username"]
+    password = config[bot]["password"]
+    sdDomain = config[bot]["sdDomain"]
+    negativePrompt = config[bot]["negativePrompt"]
+
     url = f'https://{username}:{password}@{sdDomain}/sdapi/v1/txt2img'
 
     data = {
