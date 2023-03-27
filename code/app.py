@@ -42,11 +42,10 @@ async def events(bot: str, payload = Body(...)):
                 original_text = event['text']
                 channel = event['channel']
                 query = re.sub("<@.*> ", "", original_text).strip()
-                # query = original_text.replace(botname, "").strip()
                 logger.debug(f"Original query was: [{original_text}]")
                 logger.debug(f'Got an event_callback of type: {event_type}')
                 logger.info(f'User query is: [{query}]')
-                fetch_and_reply.apply_async(args=[query, channel])
+                fetch_and_reply.apply_async(args=[query, channel, bot])
             case _:
                 logger.info(f"Got some unknown event type: { payload['type'] }")
 
