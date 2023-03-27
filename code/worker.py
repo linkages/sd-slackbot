@@ -37,11 +37,10 @@ logger.info(f"Opening {workerConfig} file...")
 with open(workerConfig) as file:
     config = json.load(file)
 
-logger.debug(f"Config is: \n{config}\n")
-
 @client.task(name="fetch_and_reply")
 def fetch_and_reply(query, channel, bot):
     logger.debug(f"Starting up image processing task for [{bot}]")
+    logger.debug(f"Config file is:\n{config}\n")
     url = f'https://{username}:{password}@{sdDomain}/sdapi/v1/txt2img'
 
     data = {
