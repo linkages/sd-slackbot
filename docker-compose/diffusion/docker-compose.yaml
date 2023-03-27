@@ -4,11 +4,12 @@ services:
   caddy:
     image: caddy:2-alpine
     restart: unless-stopped
+    network_mode: host
     depends_on:
       - slackbot
-    ports:
-      - "80:80"
-      - "443:443"
+#    ports:
+#      - "80:80"
+#      - "443:443"
 #      - "443:443/udp"
     volumes:
       - /export/caddy/config/Caddyfile:/etc/caddy/Caddyfile
@@ -16,28 +17,28 @@ services:
       - /export/caddy/caddy_data:/data
       - /export/caddy/caddy_config:/config
 
-  diffusion:
-    image: r8.im/stability-ai/stable-diffusion@sha256:a9758cbfbd5f3c2094457d996681af52552901775aa2d6dd0b17fd15df959bef
-    restart: unless-stopped
+#  diffusion:
+#    image: r8.im/stability-ai/stable-diffusion@sha256:a9758cbfbd5f3c2094457d996681af52552901775aa2d6dd0b17fd15df959bef
+#    restart: unless-stopped
 #    ports:
 #      - "5000:5000"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu]
+#    deploy:
+#      resources:
+#        reservations:
+#         devices:
+#           - capabilities: [gpu]
 
   slackbot:
-    image: sd-slackbot:latest
+    image: ghcr.io/linkages/sd-slackbot:latest
     restart: unless-stopped
     depends_on:
-      - diffusion
       - redis
-#    ports:
-#      - "8080:8080"
+    ports:
+      - "8000:8000"
     volumes:
       - /export/caddy/site/images:/out
       - /export/slackbot/logs:/logs
+      - ./worker.json:/config/worker.json:ro
     env_file: sd-slackbot.env
 
   redis:
