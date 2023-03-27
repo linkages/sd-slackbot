@@ -8,7 +8,7 @@ from worker import fetch_and_reply
 
 app = FastAPI()
 
-# logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
+logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
 
 token = os.environ.get("token","")
