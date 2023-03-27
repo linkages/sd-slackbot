@@ -1,4 +1,5 @@
 import os
+import json
 import requests
 from datetime import datetime
 import base64
@@ -11,6 +12,8 @@ client = Celery(__name__, backend="redis://redis:6379/2", broker="redis://redis:
 # client.conf.update(app.config)
 
 outdir="/out/"
+workerConfig = "/config/worker.json"
+
 domain= os.environ.get("domain")
 auth_token = os.environ.get("auth_token")
 
@@ -29,6 +32,10 @@ token = os.environ.get("token")
 team = os.environ.get("team")
 
 logger = get_task_logger(__name__)
+logger.info(f"Opening {workerConfig} file...")
+
+with open(workerConfig) as file:
+    config = json.load(file)
 
 @client.task(name="fetch_and_reply")
 def fetch_and_reply(query, channel, bot):
