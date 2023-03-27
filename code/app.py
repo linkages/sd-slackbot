@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 
 token = os.environ.get("token","")
 team = os.environ.get("team","")
-botname = os.environ.get("botname", "<@U04VCKFJK17> ")
 
 def is_request_valid(request):
     is_token_valid = request.form['token'] in token.split(',')
