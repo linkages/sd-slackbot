@@ -22,7 +22,7 @@ with open(workerConfig) as file:
 
 @client.task(name="fetch_and_reply")
 def fetch_and_reply(query, channel, bot):
-    logger.debug(f"Starting up image processing task for [{bot}]")
+    logger.info(f"Starting up image processing task for [{bot}]")
     logger.debug(f"Config file is:\n{config}\n")
 
     auth_token = config[bot]["auth_token"]
