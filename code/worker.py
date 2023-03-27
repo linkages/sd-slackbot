@@ -31,8 +31,8 @@ team = os.environ.get("team")
 logger = get_task_logger(__name__)
 
 @client.task(name="fetch_and_reply")
-def fetch_and_reply(query, channel):
-    logger.debug("Starting up image processing task")
+def fetch_and_reply(query, channel, bot):
+    logger.debug(f"Starting up image processing task for [{bot}]")
     url = f'https://{username}:{password}@{sdDomain}/sdapi/v1/txt2img'
 
     data = {
@@ -92,7 +92,7 @@ def fetch_and_reply(query, channel):
         out_file.write(image)
         out_file.close()
     else:
-        logger.info("Something went wrong creating the image: [{status}]".format(status=r.status_code))
+        logger.info(f"Something went wrong creating the image: [{r.status_code}]")
 
     del r
     logger.debug("Finished image processing task")
@@ -121,13 +121,13 @@ def fetch_and_reply(query, channel):
         'Authorization': 'Bearer '+ auth_token
     }
 
-    logger.info("Posting to channel: [{channel}]".format(channel=channel))
-    logger.debug("Going to post this: {data}".format(data=rDict))
+    logger.info(f"Posting to channel: [{channel}]")
+    logger.debug(f"Going to post this: {rDict}")
     chatUrl = 'https://slack.com/api/chat.postMessage'
     r = requests.post(chatUrl, headers=headers, json=rDict)
     if r.status_code == 200:
-        logger.debug("Response: {message}".format(message=r.json()))
+        logger.debug(f"Response: {r.json}")
     else:
-        logger.info("Something went wrong: [{status}]".format(status=r.status_code))
+        logger.info(f"Something went wrong: [{r.status_code}]")
 
     del r
