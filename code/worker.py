@@ -14,12 +14,6 @@ client = Celery(__name__, backend="redis://redis:6379/2", broker="redis://redis:
 outdir="/out/"
 workerConfig = "/config/worker.json"
 
-domain= os.environ.get("domain")
-auth_token = os.environ.get("auth_token")
-
-token = os.environ.get("token")
-team = os.environ.get("team")
-
 logger = get_task_logger(__name__)
 logger.info(f"Opening {workerConfig} file...")
 
@@ -31,6 +25,8 @@ def fetch_and_reply(query, channel, bot):
     logger.debug(f"Starting up image processing task for [{bot}]")
     logger.debug(f"Config file is:\n{config}\n")
 
+    auth_token = config[bot]["auth_token"]
+    domain = config[bot]["domain"]
     steps = config[bot]["steps"]
     scale = config[bot]["scale"]
     sampler = config[bot]["sampler"]
