@@ -1,5 +1,6 @@
 import os
 import logging
+import re
 
 from fastapi import Body, FastAPI, Form, Request
 from fastapi.responses import JSONResponse, HTMLResponse
@@ -40,7 +41,8 @@ async def events(bot: str, payload = Body(...)):
                 event_type = event['type']
                 original_text = event['text']
                 channel = event['channel']
-                query = original_text.replace(botname, "").strip()
+                query = re.sub("<@.*> ", "", original_text).strip()
+                # query = original_text.replace(botname, "").strip()
                 logger.debug(f"Original query was: [{original_text}]")
                 logger.debug(f'Got an event_callback of type: {event_type}')
                 logger.info(f'User query is: [{query}]')
