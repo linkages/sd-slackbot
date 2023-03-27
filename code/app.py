@@ -40,7 +40,7 @@ async def events(bot: str, payload = Body(...)):
                 event_type = event['type']
                 original_text = event['text']
                 channel = event['channel']
-                query = re.sub("<@.*> ", "", original_text).strip()
+                query = re.sub("<@.*>", "", original_text).strip()
                 logger.debug(f"Original query was: [{original_text}]")
                 logger.debug(f'Got an event_callback of type: {event_type}')
                 logger.info(f'User query is: [{query}]')
